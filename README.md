@@ -121,7 +121,7 @@ sudo ./opt/intel/intel_turbo.sh
  ```
 
  If you want to remove the script in the future, first you need to delete the task from the cron table, typing again ```crontab -e``` and removing the line previously added.
- You can then proceed to delete all files from your system, following the same method in [Removal](https://github.com/LDrawe/intel-turbo/edit/main/README.md#removal):
+ You can then proceed to delete all files from your system, following the same method in [Removal](https://github.com/LDrawe/intel-turbo#removal):
 
  ```shell
  sudo rm -r /opt/intel/
