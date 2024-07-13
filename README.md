@@ -13,11 +13,24 @@
 # Installation
 First, you need msr-tools installed on your system
 
-## Arch and derivatives
+- Ubuntu and derivatives
 
  ```shell
- sudo pacman -S msr-tools
+ sudo apt install msr-tools
 ```
+
+- Fedora and derivatives
+
+ ```shell
+ sudo dnf install msr-tools
+```
+
+- Arch and derivatives
+
+  ```shell
+  sudo pacman -S cronie
+  ```
+For other distros, consult it's repositories
 
 Next, the intel folder in opt should be placed under the /opt/ folder of your Linux distribution, while the intel-turbo service file should be placed under the system subfolder of the systemd directory, located in /etc/systemd/system/. I've also put it inside their correct destination folders right in the repository so you can quickly identify where it should be dropped. 
 
