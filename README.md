@@ -1,12 +1,12 @@
 # intel-turbo
 
-A simple Linux script to disable Intel Turbo Boost on systems using the `intel_pstate` frequency driver.
+A simple Linux script to **enable** Intel Turbo Boost on systems using the `intel_pstate` frequency driver.
 
 ---
 
 ## Description
 
-This script disables Intel Turbo Boost technology on supported Linux distributions. It can be used with **systemd**, **SysVinit**, or manually through other startup mechanisms.
+This script **enables** Intel Turbo Boost technology on supported Linux distributions. It can be used with **systemd**, or manually through other startup mechanisms.
 
 To check if your system supports the `intel_pstate` driver, run:
 
@@ -22,40 +22,31 @@ If all outputs return `intel_pstate`, your system is compatible.
 
 ### Systemd-Based Systems
 
-1. Copy the `intel` folder to `/opt/`:
+1. Clone the repo and enter the folder:
+
+```bash
+   git clone https://github.com/LDrawe/intel-turbo.git
+   cd intel-turbo
+```
+
+2. Copy the files and ensure the script has execution permissions:
 
    ```bash
    sudo cp -r intel /opt/
+   sudo cp systemd/system/intel-turbo.service /etc/systemd/system/
+   sudo chmod +x /opt/intel/intel_turbo.sh
    ```
 
-2. Copy the `intel-noturbo.service` file to the systemd directory:
+4. To automatically enable Turbo Boost at startup:
 
    ```bash
-   sudo cp systemd/intel-noturbo.service /etc/systemd/system/
+   sudo systemctl enable --now intel-turbo.service
    ```
 
-3. Ensure the script has execution permissions:
+5. (Optional) Check the service status:
 
    ```bash
-   sudo chmod +x /opt/intel/intel_noturbo.sh
-   ```
-
-4. To automatically disable Turbo Boost at startup:
-
-   ```bash
-   sudo systemctl enable --now intel-noturbo.service
-   ```
-
-   Or, to disable Turbo Boost manually on demand:
-
-   ```bash
-   sudo systemctl start intel-noturbo.service
-   ```
-
-5. Check the service status:
-
-   ```bash
-   sudo systemctl status intel-noturbo.service
+   sudo systemctl status intel-turbo.service
    ```
 
 6. You can verify the Turbo Boost status at any time with:
@@ -69,41 +60,6 @@ If all outputs return `intel_pstate`, your system is compatible.
 
 ---
 
-### SysVinit-Based Systems
-
-1. Copy the `intel` folder to `/opt/`:
-
-   ```bash
-   sudo cp -r intel /opt/
-   ```
-
-2. Copy the init script to `/etc/init.d/`:
-
-   ```bash
-   sudo cp sysvinit/intel_noturbo /etc/init.d/
-   sudo chmod +x /etc/init.d/intel_noturbo
-   ```
-
-3. Enable the script to run at boot:
-
-   ```bash
-   sudo update-rc.d intel_noturbo defaults
-   ```
-
-4. To disable Turbo Boost immediately without rebooting:
-
-   ```bash
-   sudo /etc/init.d/intel_noturbo start
-   ```
-
-   Or:
-
-   ```bash
-   sudo service intel_noturbo start
-   ```
-
----
-
 ## Manual or Alternative Startup Methods
 
 If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you can still use the script manually or set it to run at startup via alternative methods.
@@ -111,7 +67,7 @@ If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you ca
 ### Manual Execution
 
 ```bash
-sudo /opt/intel/intel_noturbo.sh
+sudo /opt/intel/intel_turbo.sh
 ```
 
 ### Automatic Execution via Cron (Example)
@@ -148,10 +104,10 @@ sudo /opt/intel/intel_noturbo.sh
    crontab -e
    ```
 
-4. Add the following line to disable Turbo Boost at startup:
+4. Add the following line to enable Turbo Boost at startup:
 
    ```bash
-   @reboot sh /opt/intel/intel_noturbo.sh
+   @reboot sh /opt/intel/intel_turbo.sh
    ```
 
 ---
@@ -163,42 +119,23 @@ sudo /opt/intel/intel_noturbo.sh
 1. Disable and stop the service:
 
    ```bash
-   sudo systemctl disable --now intel-noturbo.service
+   sudo systemctl disable --now intel-turbo.service
    ```
 
 2. Mask the service to prevent accidental activation:
 
    ```bash
-   sudo systemctl mask intel-noturbo.service
+   sudo systemctl mask intel-turbo.service
    ```
 
 3. Remove installed files:
 
    ```bash
    sudo rm -r /opt/intel/
-   sudo rm /etc/systemd/system/intel-noturbo.service
+   sudo rm /etc/systemd/system/intel-turbo.service
    ```
 
 4. Reboot to apply changes.
-
----
-
-### SysVinit
-
-1. Remove the service from startup:
-
-   ```bash
-   sudo update-rc.d -f intel_noturbo remove
-   ```
-
-2. Delete installed files:
-
-   ```bash
-   sudo rm -r /opt/intel/
-   sudo rm /etc/init.d/intel_noturbo
-   ```
-
-3. Reboot to apply changes.
 
 ---
 
@@ -218,7 +155,16 @@ sudo /opt/intel/intel_noturbo.sh
 
 ---
 
+## Credits
+
+This project is a fork of the original [intel-turbo](https://github.com/ShyVortex/intel-turbo) script by [@ShyVortex](https://github.com/ShyVortex), modified to enable Intel Turbo Boost instead of disabling it.
+
+Fork maintained by [@LDrawe](https://github.com/LDrawe).
+
+
 ## License
 
 * Licensed under the [GNU General Public License v3.0](https://github.com/ShyVortex/intel-turbo/blob/main/LICENSE).
 * Copyright © [@ShyVortex](https://github.com/ShyVortex), 2023.
+* Copyright © [@LDrawe](https://github.com/LDrawe), 2025 — modifications to enable Turbo Boost.
+
