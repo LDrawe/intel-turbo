@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cores=$(nproc --all)
-for core in $cores; do
+for ((core=0; core<cores; core++)); do
 
     wrmsr -p${core} 0x1a0 0x850089
 
