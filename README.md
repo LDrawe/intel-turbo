@@ -32,8 +32,8 @@ If all outputs return `intel_pstate`, your system is compatible.
 2. Copy the files and ensure the script has execution permissions:
 
    ```bash
-   sudo cp -r intel /opt/
-   sudo cp systemd/system/intel-turbo.service /etc/systemd/system/
+   sudo cp -r opt/intel /opt/
+   sudo cp etc/systemd/system/intel-turbo.service /etc/systemd/system/
    sudo chmod +x /opt/intel/intel_turbo.sh
    ```
 
