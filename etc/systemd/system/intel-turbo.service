@@ -1,11 +1,13 @@
 [Unit]
 Description=Enable Turbo Boost on Intel CPUs
-After=getty.target
+After=multi-user.target
+Before=auto-cpufreq.service
+ConditionPathExists=/opt/intel/intel_turbo.sh
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/opt/intel/intel_turbo.sh
 RemainAfterExit=yes
 
 [Install]
-WantedBy=getty.target
+WantedBy=multi-user.target
