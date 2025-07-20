@@ -1,19 +1,19 @@
 #! /bin/bash
 
-cores=$(cat /proc/cpuinfo | grep processor | awk '{print $3}')
+cores=$(nproc --all)
 for core in $cores; do
 
-    sudo wrmsr -p${core} 0x1a0 0x850089
+    wrmsr -p${core} 0x1a0 0x850089
 
     state=$(sudo rdmsr -p${core} 0x1a0 -f 38:38)
     if [[ $state -eq 1 ]]; then
-        echo "core ${core}: disabled"
+        echo "Turbo Boost disabled for Core ${core}"
     else
-        echo "core ${core}: enabled"
+        echo "Turbo Boost enabled for Core ${core}"
     fi
 done
 
 # Set CPU governor to performance for all cores
 for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
-    echo performance | sudo tee "$f"
+    echo performance | tee "$f"
 done
