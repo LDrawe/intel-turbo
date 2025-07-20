@@ -1,7 +1,7 @@
 [Unit]
 Description=Enable Turbo Boost on Intel CPUs
-After=multi-user.target
 Before=auto-cpufreq.service
+Wants=auto-cpufreq.service
 ConditionPathExists=/opt/intel/intel_turbo.sh
 
 [Service]
