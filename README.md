@@ -10,9 +10,9 @@ The project exists because, in Linux, the standard Turbo Boost control file:
 /sys/devices/system/cpu/intel_pstate/no_turbo
 ```
 cannot be modified — not even by the root user — on certain motherboards, firmwares or aftermarket boards.
-This prevents users from enabling Turbo Boost through regular Linux interfaces, even if the hardware fully supports it.
+Because of this restriction, Turbo Boost cannot be enabled through standard Linux interfaces, even on CPUs that fully support the feature.
+To restore the missing functionality, the script modifies the appropriate Model-Specific Register (MSR) directly.
 
-This script bypasses that limitation by writing directly to the appropriate Model-Specific Register (MSR).
 ---
 
 ## 🔍 Background
