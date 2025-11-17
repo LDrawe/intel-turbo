@@ -30,7 +30,7 @@ Attempts to toggle the intel_pstate interface fail because:
 
 - The protection is enforced inside the kernel, not in the filesystem
 
-- Therefore, the only reliable method is to modify the correct MSR and flip the corresponding bit manually.
+Therefore, the only reliable method is to modify the correct MSR and flip the corresponding bit manually.
 
 ## ⚙️ How It Works
 
