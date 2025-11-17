@@ -57,7 +57,7 @@ The script runs through all CPU cores and applies the patch.
 
 ---
 
-##📦 Installation
+## 📦 Installation
 
 ### Systemd-Based Systems
 
@@ -99,7 +99,7 @@ The script runs through all CPU cores and applies the patch.
 
 ---
 
-##🖥️ Manual or Alternative Startup Methods
+## 🖥️ Manual or Alternative Startup Methods
 
 If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you can still use the script manually or set it to run at startup via alternative methods.
 
@@ -151,7 +151,7 @@ sudo /opt/intel/intel_turbo.sh
 
 ---
 
-##🗑️ Removal
+## 🗑️ Removal
 
 ### Systemd
 
@@ -201,7 +201,7 @@ This project is a fork of the original [intel-turbo](https://github.com/ShyVorte
 Fork maintained by [@LDrawe](https://github.com/LDrawe).
 
 
-##📄 License
+## 📄 License
 
 * Licensed under the [GNU General Public License v3.0](https://github.com/ShyVortex/intel-turbo/blob/main/LICENSE).
 * Copyright © [@ShyVortex](https://github.com/ShyVortex), 2023.
