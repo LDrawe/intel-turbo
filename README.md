@@ -1,24 +1,61 @@
 # intel-turbo
 
-A simple Linux script to **enable** Intel Turbo Boost on systems using the `intel_pstate` frequency driver.
+Enable Intel® Turbo Boost on Linux systems using the intel_pstate frequency driver
 
----
+This repository provides a lightweight and safe Linux script for reactivating Intel Turbo Boost on systems where the feature is unavailable through BIOS/UEFI or locked at firmware level, even when using administrative privileges.
 
-## Description
-
-This script **enables** Intel Turbo Boost technology on supported Linux distributions. It can be used with **systemd**, or manually through other startup mechanisms.
-
-To check if your system supports the `intel_pstate` driver, run:
+The project exists because, in Linux, the standard Turbo Boost control file:
 
 ```bash
-cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_driver
+/sys/devices/system/cpu/intel_pstate/no_turbo
+```
+cannot be modified — not even by the root user — on certain motherboards, firmwares or aftermarket boards.
+This prevents users from enabling Turbo Boost through regular Linux interfaces, even if the hardware fully supports it.
+
+This script bypasses that limitation by writing directly to the appropriate Model-Specific Register (MSR).
+---
+
+## 🔍 Background
+
+In some systems—especially those with custom, replacement or generic motherboards—BIOS/UEFI may omit or lock Turbo Boost configuration options.
+On Linux, unlike Windows where tools like ThrottleStop exist, there is no built-in mechanism to re-enable Turbo Boost when firmware restrictions are in place.
+
+Attempts to use the intel_pstate interface fail because:
+
+The no_turbo control file is read-only,
+
+Permissions cannot be changed,
+
+And its write protection is enforced at kernel level, not filesystem level.
+
+Therefore, the only reliable alternative is accessing the relevant MSR and flipping the correct bit manually.
+
+## ⚙️ How It Works
+
+Intel CPUs expose Turbo Boost control through the MSR:
+
+Register: IA32_MISC_ENABLE
+
+Address: 0x1A0
+
+Bit 38: Turbo Mode Disable
+
+1 → Turbo Boost disabled
+
+0 → Turbo Boost enabled
+
+To enable Turbo Boost, the script clears bit 38 using:
+
+```bash
+wrmsr -p $CORE 0x1a0 0x850089
 ```
 
-If all outputs return `intel_pstate`, your system is compatible.
+(This value depends on preserving other bits from the register — the script handles it safely.)
+The script runs through all CPU cores and applies the patch.
 
 ---
 
-## Installation
+## 📦 Installation
 
 ### Systemd-Based Systems
 
