@@ -57,6 +57,11 @@ The script runs through all CPU cores and applies the patch.
 
 ---
 
+## 🔧 Integration with auto-cpufreq
+
+During testing, for some reason auto-cpufreq prevented the CPU frequencies from scaling up beyond the base clock, effectively disabling Turbo Boost.
+To avoid this, the systemd service was configured to run after auto-cpufreq finishes its initialization.
+
 ## 📦 Installation
 
 ### Systemd-Based Systems
