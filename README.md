@@ -34,26 +34,24 @@ Therefore, the only reliable method is to modify the correct MSR and flip the co
 
 ## ⚙️ How It Works
 
-Intel CPUs expose Turbo Boost control through the MSR:
+Intel CPUs expose Turbo Boost control through the Model-Specific Register (MSR):
 
-Register: IA32_MISC_ENABLE
+- **Register:** `IA32_MISC_ENABLE`
+- **Address:** `0x1A0`
+- **Bit 38:** Turbo Mode Disable
+  - `1` → Turbo Boost disabled
+  - `0` → Turbo Boost enabled
 
-Address: 0x1A0
+Writing a hardcoded hex value to this register is dangerous, as it can overwrite other vital CPU settings configured by the system's BIOS. To safely enable or disable Turbo Boost, this script uses **bitwise operations** to target *only* bit 38 while preserving the rest of the register's configuration.
 
-Bit 38: Turbo Mode Disable
+The script operates by:
+1. Reading the current 64-bit value of the register for the specific core using `rdmsr`.
+2. Applying a dynamic bitmask:
+   - **To enable:** Uses bitwise AND with NOT (`~(1 << 38)`) to clear bit 38.
+   - **To disable:** Uses bitwise OR (`1 << 38`) to set bit 38.
+3. Writing the safely modified value back using `wrmsr`.
 
-1 → Turbo Boost disabled
-
-0 → Turbo Boost enabled
-
-To enable Turbo Boost, the script clears bit 38 using:
-
-```bash
-wrmsr -p $CORE 0x1a0 0x850089
-```
-
-(This value depends on preserving other bits from the register — the script handles it safely.)
-The script runs through all CPU cores and applies the patch.
+The script automatically detects all available CPU cores and applies the patch to each one.
 
 ---
 
