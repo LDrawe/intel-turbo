@@ -4,15 +4,14 @@ Enable Intel® Turbo Boost on Linux systems using the ***intel_pstate*** frequen
 
 This repository provides a lightweight and safe Linux script to **reactivate Intel Turbo Boost** on systems where the feature is unavailable through BIOS/UEFI or locked at firmware level, even when using administrative privileges.
 
-The project exists because, in Linux, the standard Turbo Boost control file:
+Under normal circumstances, Turbo Boost can be toggled by root via the standard Linux control file:
 
 ```bash
 /sys/devices/system/cpu/intel_pstate/no_turbo
 ```
-is read-only, enforced by the kernel, and cannot be modified.
-Because of this restriction, Turbo Boost cannot be enabled using standard Linux interfaces, even on CPUs that fully support it.
+However, on laptops with restricted OEM firmware or generic motherboards, the BIOS often hides these settings. When the Linux kernel detects this locked firmware state during boot, it strictly enforces a read-only lock on the no_turbo file. Because of this restriction, Turbo Boost cannot be enabled using standard Linux interfaces, even on CPUs that inherently support the feature.
 
-To restore the missing functionality, this script writes directly to the appropriate Model-Specific Register (MSR).
+To bypass this kernel-enforced lock and restore the missing functionality, this script writes directly to the appropriate Model-Specific Register (MSR).
 
 ---
 
