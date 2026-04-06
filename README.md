@@ -1,4 +1,4 @@
-# intel-turbo
+# intel-turbo-unlock
 
 Enable Intel® Turbo Boost on Linux systems using the ***intel_pstate*** frequency driver
 
