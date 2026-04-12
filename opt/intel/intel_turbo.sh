@@ -2,66 +2,59 @@
 
 # Check if running as root (required for wrmsr)
 if [ "$EUID" -ne 0 ]; then
-  echo "Please run this script as root (sudo)."
+  printf "Please run this script as root (sudo).\n"
   exit 1
 fi
 
+# Check for required dependencies (msr-tools)
+command -v rdmsr >/dev/null || { printf "Error: 'rdmsr' not found. Please install msr-tools.\n"; exit 1; }
+command -v wrmsr >/dev/null || { printf "Error: 'wrmsr' not found. Please install msr-tools.\n"; exit 1; }
+
 # Set default action to "on" if no parameter is passed (e.g., ./turbo.sh)
 ACTION=${1:-on}
-# Convert string to lowercase, preventing errors if the user types "ON" or "Off"
+# Convert string to lowercase
 ACTION=${ACTION,,}
 
 # Check if the passed parameter is valid
 if [[ "$ACTION" != "on" && "$ACTION" != "off" ]]; then
-    echo "Invalid usage. Try: $0 [on|off]"
-    echo "If no parameter is passed, the default is 'on'."
+    printf "Invalid usage. Try: %s [on|off]\n" "$0"
     exit 1
 fi
 
+# Define color variables for printf
 GREEN='\e[32m'
 RED='\e[31m'
-NC='\e[0m' # No Color (Resets to the default terminal color)
+NC='\e[0m'
 
-cores=$(nproc --all)
+printf "Applying Turbo Boost configuration: %s\n" "$ACTION"
+printf "----------------------------------------\n"
 
-echo "Applying Turbo Boost configuration: $ACTION"
-echo "----------------------------------------"
+# Read the current hexadecimal value from Core 0 as the baseline
+current_hex=$(rdmsr -p0 0x1a0) || { printf "Error: Failed to read MSR. Is the 'msr' module loaded?\n"; exit 1; }
+current_val=$((0x$current_hex))
 
-for ((core=0; core<cores; core++)); do
-    # 1. Read the current hexadecimal value of the register
-    current_hex=$(rdmsr -p${core} 0x1a0)
+# 7. Bitwise Math depending on the parameter
+if [ "$ACTION" == "on" ]; then
+    # Enable Turbo (Set bit 38 to 0 using Bitwise AND with NOT)
+    new_val=$(( current_val & ~(1 << 38) ))
+    pstate_val=0
+    state_msg="${GREEN}ENABLED${NC}"
+else
+    # Disable Turbo (Set bit 38 to 1 using Bitwise OR)
+    new_val=$(( current_val | (1 << 38) ))
+    pstate_val=1
+    state_msg="${RED}DISABLED${NC}"
+fi
 
-    # 2. Convert the read value to a numeric format that bash understands
-    current_val=$((0x$current_hex))
+# Convert the new formatted numeric value back to hexadecimal
+new_hex=$(printf "0x%x" $new_val)
 
-    # 3. Bitwise Math depending on the parameter
-    if [ "$ACTION" == "on" ]; then
-        # Enable Turbo (Clear bit 38 using Bitwise AND with NOT)
-        new_val=$(( current_val & ~(1 << 38) ))
-        pstate_val=0
-    else
-        # Disable Turbo (Set bit 38 to 1 using Bitwise OR)
-        new_val=$(( current_val | (1 << 38) ))
-        pstate_val=1
-    fi
+# Modify the MSR for all cores simultaneously (-a flag)
+wrmsr -a 0x1a0 $new_hex
 
-    # 4. Convert the new formatted numeric value back to hexadecimal
-    new_hex=$(printf "0x%x" $new_val)
+# After modifying the hardware, ensure the Linux pstate driver aligns
+# The error output (2>) is sent to /dev/null to quietly ignore read-only file blocks
+echo $pstate_val > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null
 
-    # 5. Write the modified new value back to the register
-    wrmsr -p${core} 0x1a0 $new_hex
-
-    # 6. Ensure the Linux pstate driver follows our manual change
-    echo $pstate_val > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null
-
-    # 7. Read only bit 38 to confirm the final state
-    state=$(rdmsr -p${core} 0x1a0 -f 38:38)
-
-    if [[ $state -eq 1 ]]; then
-        echo -e "Turbo Boost for Core ${core}: ${RED}DISABLED${NC}"
-    else
-        echo -e "Turbo Boost for Core ${core}: ${GREEN}ENABLED${NC}"
-    fi
-done
-
-echo "----------------------------------------"
+printf "Turbo Boost is now %b for all cores (Value written: %s)\n" "$state_msg" "$new_hex"
+printf "----------------------------------------\n"
