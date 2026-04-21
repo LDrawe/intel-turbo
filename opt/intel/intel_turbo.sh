@@ -27,7 +27,7 @@ RED='\e[31m'
 NC='\e[0m'
 
 printf "Applying Turbo Boost configuration: %s\n" "$ACTION"
-printf "----------------------------------------\n"
+printf "%s\n" "----------------------------------------"
 
 # Read the current hexadecimal value from Core 0 as the baseline
 current_hex=$(rdmsr -p0 0x1a0) || { printf "Error: Failed to read MSR. Is the 'msr' module loaded?\n"; exit 1; }
@@ -57,4 +57,4 @@ wrmsr -a 0x1a0 $new_hex
 echo $pstate_val > /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null
 
 printf "Turbo Boost is now %b for all cores (Value written: %s)\n" "$state_msg" "$new_hex"
-printf "----------------------------------------\n"
+printf "%s\n" "----------------------------------------"
