@@ -1,12 +1,12 @@
 [Unit]
 Description=Enable Turbo Boost on Intel CPUs
-Before=auto-cpufreq.service
+After=auto-cpufreq.service
 Wants=auto-cpufreq.service
-ConditionPathExists=/opt/intel/intel_turbo.sh
+ConditionPathExists=/usr/local/bin/intel-turbo
 
 [Service]
 Type=oneshot
-ExecStart=/opt/intel/intel_turbo.sh
+ExecStart=/usr/local/bin/intel-turbo
 RemainAfterExit=yes
 
 [Install]

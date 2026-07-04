@@ -73,9 +73,9 @@ To avoid this, the systemd service was configured to run after auto-cpufreq fini
 2. Copy the files and ensure the script has execution permissions:
 
    ```bash
-   sudo cp -r opt/intel /opt/
+   sudo cp intel_turbo.sh /usr/local/bin/intel-turbo
    sudo cp etc/systemd/system/intel-turbo.service /etc/systemd/system/
-   sudo chmod +x /opt/intel/intel_turbo.sh
+   sudo chmod +x /usr/local/bin/intel-turbo
    ```
 
 4. To automatically enable Turbo Boost at startup:
@@ -108,9 +108,13 @@ If your system uses **OpenRC**, **runit**, **s6**, or other init systems, you ca
 ### Manual Execution
 
 ```bash
-sudo /opt/intel/intel_turbo.sh
+# To enable Turbo Boost
+sudo intel-turbo on
 ```
-
+```bash
+# To disable Turbo Boost
+sudo intel-turbo off
+```
 ### Automatic Execution via Cron (Example)
 
 1. Ensure `cronie` is installed:
@@ -148,7 +152,7 @@ sudo /opt/intel/intel_turbo.sh
 4. Add the following line to enable Turbo Boost at startup:
 
    ```bash
-   @reboot sh /opt/intel/intel_turbo.sh
+   @reboot /usr/local/bin/intel-turbo
    ```
 
 ---
@@ -172,7 +176,7 @@ sudo /opt/intel/intel_turbo.sh
 3. Remove installed files:
 
    ```bash
-   sudo rm -r /opt/intel/
+   sudo rm /usr/local/bin/intel-turbo
    sudo rm /etc/systemd/system/intel-turbo.service
    ```
 
@@ -191,7 +195,7 @@ sudo /opt/intel/intel_turbo.sh
 2. Delete installed files:
 
    ```bash
-   sudo rm -r /opt/intel/
+   sudo rm /usr/local/bin/intel-turbo
    ```
 
 ---
