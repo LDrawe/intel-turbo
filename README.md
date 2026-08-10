@@ -33,7 +33,7 @@ Therefore, the only reliable method is to modify the correct MSR and flip the co
 
 ## ⚙️ How It Works
 
-Intel CPUs expose Turbo Boost control through the Model-Specific Register (MSR):
+Intel CPUs expose Turbo Boost control through the following Model-Specific Register (MSR):
 
 - **Register:** `IA32_MISC_ENABLE`
 - **Address:** `0x1A0`
